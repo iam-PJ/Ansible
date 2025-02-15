@@ -1,0 +1,26 @@
+- name: playbook
+  hosts: localhost
+  become: true
+  connection: local
+  tasks:
+    - name: update apt
+      shell: apt update -y
+    
+    - name: install LEMP
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+       - nginx
+       - php
+       - php8.3-fpm
+       - mariadb-server
+    - name: start LEMP
+      service:
+        name: "{{ item }}"
+        state: started
+      loop:
+       - nginx
+       - php8.3-fpm
+       - mariadb
+

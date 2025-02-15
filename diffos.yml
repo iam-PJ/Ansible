@@ -1,0 +1,55 @@
+- name: Install LEMP Stack
+  hosts: all
+  become: true
+  tasks:
+    - name: Update apt packages (Debian)
+      shell: apt update -y
+      when: ansible_os_family == "Debian"
+
+    - name: Update dnf packages (RedHat)
+      shell: dnf update -y
+      when: ansible_os_family == "RedHat"
+
+    - name: Install LEMP stack on Debian
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nginx
+        - php
+        - php8.3-fpm
+        - mariadb-server
+      when: ansible_os_family == "Debian"
+
+    - name: Install LEMP stack on RedHat (Amazon Linux)
+      dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nginx
+        - php
+        - php-fpm
+        - mariadb105-server  # 🔹 Use the correct package for Amazon Linux
+      when: ansible_os_family == "RedHat"
+
+    - name: Start services on Debian
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - php8.3-fpm
+        - mariadb
+      when: ansible_os_family == "Debian"
+
+    - name: Start services on RedHat
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - php-fpm
+        - mariadb
+      when: ansible_os_family == "RedHat"

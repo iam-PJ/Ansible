@@ -1,0 +1,51 @@
+- name: ThreeTier Architecture
+  hosts: all
+  become: true
+  tasks: 
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install and start nginx on WebServer
+      when: "'WebServer' in group_names"
+      block:
+        - name: Install nginx
+          apt:
+            name: nginx
+            state: present
+
+        - name: Start nginx
+          service:
+            name: nginx
+            state: started
+            enabled: yes
+
+    - name: Install and configure PHP on AppServer
+      when: "'AppServer' in group_names"
+      block:
+        - name: Install PHP and PHP-FPM
+          apt:
+            name: 
+              - php
+              - php8.3-fpm
+            state: present
+
+        - name: Start PHP-FPM
+          service:
+            name: php8.3-fpm
+            state: started
+            enabled: yes
+
+    - name: Install and start MariaDB on DbServer
+      when: "'DbServer' in group_names"
+      block:
+        - name: Install MariaDB
+          apt:
+            name: mariadb-server
+            state: present
+
+        - name: Start MariaDB service
+          service:
+            name: mariadb
+            state: started
+            enabled: yes

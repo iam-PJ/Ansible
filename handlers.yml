@@ -1,0 +1,62 @@
+- name: install LEMP
+  hosts: localhost
+  become: true
+  connection: local
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Install Php
+      apt:
+        name: php
+        state: present
+      notify: restart nginx
+
+    - name: Install php8.3-fpm
+      apt:
+        name: php8.3-fpm
+        state: present
+      notify: restart nginx
+
+    - name: Install mariadb
+      apt:
+        name: mariadb-server
+        state: present
+      notify: 
+        - restart nginx
+        - restart php8.3-fpm
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+
+    - name: Start php8.3-fpm
+      service:
+        name: php8.3-fpm
+        state: started
+    
+    - name: Start mariadb
+      service:
+        name: mariadb
+        state: started
+  handlers:
+    - name: restart nginx
+      service:
+         name: nginx
+         state: restarted
+
+    - name: restart php8.3-fpm
+      service:
+         name: php8.3-fpm
+         state: restarted
+
+    - name: restart mariadb
+      service:
+         name: mariadb
+         state: restarted
+         
+         
+      

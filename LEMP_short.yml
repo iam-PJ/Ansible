@@ -1,0 +1,28 @@
+- name: first
+  hosts: localhost
+  become: true
+  connection: local
+  tasks:
+    - name: Update pacakage manager
+      shell: apt update -y
+      
+    - name: Install Nginx
+      apt: name=nginx state=present
+       
+    - name: Install php
+      apt: name=php state=present
+        
+    - name: Install php8.3-fpm
+      apt: name=php8.3-fpm state=present
+        
+    - name: Install mariadb server
+      apt: name=mariadb-server state=present
+        
+    - name: Start nginx
+      service: name=nginx state=started
+        
+    - name: Start php8.3-fpm
+      service: name=php8.3-fpm state=started
+
+    - name: Start mariadb
+      service: name=mariadb state=started
